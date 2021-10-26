@@ -184,28 +184,47 @@ void tutorial2_homework(void) {
 		led_off(LED2);
 		led_off(LED3);
 		led_off(LED4);
-		while (btn_state() != ALL_OFF)
-		{
+		state = 1;
+		while (btn_state() != ALL_OFF){
 			last_ticks1 = HAL_GetTick();
 			while((HAL_GetTick() - last_ticks1) >= 0 && (HAL_GetTick() - last_ticks1) <= 1000)
 			{
 				if (tft_update(50)== 0)
+				{
 					tft_prints(0, 0, "Hello, Chloe");
+					state = 1;
+				}
+				if (btn_state() == ALL_OFF)
+				{
+					state = 2;
+					break;
+				}
 			}
+
 		}
 		// last_ticks1 = HAL_GetTick();
-		state = 1;
-		if (tft_update(50)== 0)
+		if (tft_update(50)== 0 && state == 1)
 			tft_prints(0, 0, " ");
 	}
 	static uint32_t last_ticks = 0;
 	last_ticks1 = HAL_GetTick();
-	while ((HAL_GetTick() - last_ticks1) >= 0 && (HAL_GetTick() - last_ticks1) <= 1000 && state ==1)
+	while ((HAL_GetTick() - last_ticks1) >= 0 && (HAL_GetTick() - last_ticks1) < 1000 && state==2)
+	{
+		if (tft_update(50) == 0 && state == 2 )
+			tft_prints(0, 0, "Hello, Chloe");
+		if((HAL_GetTick() - last_ticks) >= 50)
+		{
+			gpio_toggle(LED1);
+			gpio_toggle(LED2);
+			gpio_toggle(LED3);
+			gpio_toggle(LED4);
+			last_ticks = HAL_GetTick();
+		}
+	}
+	while ((HAL_GetTick() - last_ticks1) >= 0 && (HAL_GetTick() - last_ticks1) < 1000 && state==1)
 	{
 		if (tft_update(50) == 0)
-		{
-			tft_prints(0, 0, " ");
-		}
+			tft_prints(0, 0, "  ");
 		if((HAL_GetTick() - last_ticks) >= 50)
 		{
 			gpio_toggle(LED1);
